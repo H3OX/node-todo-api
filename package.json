@@ -2,6 +2,7 @@
   "name": "node-todo-api",
   "version": "1.0.0",
   "dependencies": {
-    "mongodb": "^2.2.5"
+    "mongodb": "^2.2.5",
+    "mongoose": "^5.4.8"
   }
 }
