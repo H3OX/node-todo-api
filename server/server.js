@@ -1,25 +1,27 @@
-const mongoose = require('mongoose')
+const app = require('express')()
+const bodyParser = require('body-parser')
 
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp', {useNewUrlParser: true});
+const {mongoose} = require('./db/mongoose')
+const {Todo} = require('./models/todo')
+const {User} = require('./models/user')
 
-const User = mongoose.model('User', {
-    email: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 1
-    }
+
+app.use(bodyParser.json())
+
+
+app.post('/todos', (req, res) => {
+    let todo = new Todo({
+        text: req.body.text
+    })
+
+    todo.save().then((doc) => {
+        res.send(doc)
+    }, (err) => {
+        res.status(400).send(err)
+    })
 })
 
-const newUser = new User({
-    email: 'my@gg.gg'
+app.listen(3000, () => {
+    console.log('Listening on port 3000')
 })
-
-newUser.save().then((res) => {
-    console.log(res)
-}, (err) => {
-    console.log(err)
-});
-
 
