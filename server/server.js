@@ -1,10 +1,11 @@
 const app = require('express')()
 const bodyParser = require('body-parser')
 
-const {mongoose} = require('./db/mongoose')
-const {Todo} = require('./models/todo')
-const {User} = require('./models/user')
+const { mongoose } = require('./db/mongoose')
+const { Todo } = require('./models/todo')
+const { User } = require('./models/user')
 const { ObjectID } = require('mongodb')
+const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
 
@@ -47,8 +48,8 @@ app.get('/todos/:id', (request, response) => {
     })
 })
 
-app.listen(3000, () => {
-    console.log('Listening on port 3000')
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
 })
 
 
