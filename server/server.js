@@ -1,5 +1,6 @@
 const app = require('express')()
 const bodyParser = require('body-parser')
+const _ = require('lodash')
 
 const { mongoose } = require('./db/mongoose')
 const { Todo } = require('./models/todo')
@@ -30,6 +31,24 @@ app.get('/todos', (req, res) => {
     }
 })
 
+app.delete('/todos/:id', (request, response) => {
+    let id = request.params.id
+    if(!ObjectID.isValid(id)) {
+        response.status(404).send({})
+    }
+    else {
+        Todo.findByIdAndRemove(id).then((todo) => {
+            if(!todo) {
+                response.status(404).send()
+            } else {
+                response.send({todo})
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+})
+
 app.get('/todos/:id', (request, response) => {
     let id = request.params.id
     if(!ObjectID.isValid(id)) {
@@ -51,6 +70,34 @@ app.get('/todos/:id', (request, response) => {
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })
+
+
+app.patch('/todos/:id', (req, res) => {
+    let id = req.params.id
+    let body = _.pick(req.body, ['text', 'completed'])
+
+    if(!ObjectID.isValid(id)) {
+        res.status(404).send({})
+    }
+
+    if(_.isBoolean(body.completed) && body.completed) {
+        body.completedAt = new Date().getTime()
+    }
+    else {
+        body.completed = false
+        body.completedAt = null
+    }
+    Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+        if(!todo) {
+            res.status(404).send()
+        }
+        res.send({todo})
+    }).catch((err) => {
+        console.log(err)
+    })
+})
+
+
 
 
 module.exports = {app}
