@@ -6,6 +6,7 @@ const { mongoose } = require('./db/mongoose')
 const { Todo } = require('./models/todo')
 const { User } = require('./models/user')
 const { ObjectID } = require('mongodb')
+const { authenticate } = require('./middleware/authenticate')
 const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
@@ -109,6 +110,12 @@ app.patch('/todos/:id', (req, res) => {
     }).catch((err) => {
         console.log(err)
     })
+})
+
+
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user)
 })
 
 
